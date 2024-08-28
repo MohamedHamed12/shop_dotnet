@@ -14,11 +14,24 @@ public class ProductsController : ControllerBase
         _mediator = mediator;
     }
 
+    //
+    // [HttpPost]
+    // public async Task<IActionResult> Create(CreateProductCommand command)
+    // {
+    //     Guid productId = await _mediator.Send(command);
+    //     return CreatedAtAction(nameof(GetById), new { id = productId }, null);
+    // }
+
+    // public async Task<ActionResult<ProductDto>> AddProduct(CreateProductCommand command)
+
     [HttpPost]
     public async Task<IActionResult> Create(CreateProductCommand command)
     {
         Guid productId = await _mediator.Send(command);
+
         return CreatedAtAction(nameof(GetById), new { id = productId }, null);
+        // var product = await _mediator.Send(command);
+        // return Ok(product);
     }
 
     [HttpGet("{id}")]

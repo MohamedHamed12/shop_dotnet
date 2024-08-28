@@ -9,18 +9,35 @@ var builder = WebApplication.CreateBuilder(args);
 //     options.UseSqlite("Data Source=shopapp.db")
 // );
 //
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite("Data Source=shopapp.db", b => b.MigrationsAssembly("ShopApp.Infrastructure"))
 );
 
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssemblyContaining<CreateProductCommandHandler>()
+);
+
+// builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
 builder.Services.AddControllers();
 
 // builder.Services.AddMediatR(typeof(Program));
 var app = builder.Build();
+
+// for routing
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,3 +86,5 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+public partial class Program { }
